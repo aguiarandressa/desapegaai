@@ -19,7 +19,7 @@ const btnLimparProduto = document.getElementById("btnLimparProduto");
 const modoTexto = document.getElementById("modoTexto");
 const produtoIdTexto = document.getElementById("produtoIdTexto");
 
-/ BOTÕES – FILTROS
+// BOTÕES – FILTROS
 const btnAplicarFiltros = document.getElementById("btnAplicarFiltros");
 const btnLimparFiltros = document.getElementById("btnLimparFiltros");
 
