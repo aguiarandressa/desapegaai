@@ -16,7 +16,6 @@ const tabProdutoForm = document.getElementById("tabProdutoForm");
 const tabProdutoList = document.getElementById("tabProdutoList");
 const produtoFormWrap = document.getElementById("produtoFormWrap");
 const produtoListWrap = document.getElementById("produtoListWrap");
-const msgListaProdutos = document.getElementById("msgListaProdutos");
 const msgProduto = document.getElementById("msgProduto");
 
 // =========================
@@ -26,7 +25,6 @@ const tabDonas = document.getElementById("tabDonas");
 const tabConds = document.getElementById("tabConds");
 const donasWrap = document.getElementById("donasWrap");
 const condsWrap = document.getElementById("condsWrap");
-//const msgDona = document.getElementById("msgDona");
 const msgCond = document.getElementById("msgCond");
 
 // =========================
