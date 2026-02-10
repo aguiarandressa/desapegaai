@@ -22,42 +22,42 @@
       }
     })();
   </script>
-  
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- CSS -->
+  <!-- 🎨 CSS -->
   <link rel="stylesheet" href="css/admin.css" />
+
+  <!-- 📦 Supabase (UMA ÚNICA VEZ, NO HEAD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
   <div class="container">
-    <!-- ⚠️ TODO O HTML ATUAL DO BODY FICA AQUI
-         (header, forms, listas, etc.)
-         👉 não muda nada visualmente
+    <!-- ⚠️ TODO O HTML DO ADMIN FICA AQUI
+         header, abas, formulários, listas etc.
+         👉 NÃO ALTERAR ESTRUTURA VISUAL
     -->
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- =========================
+       SCRIPTS DO ADMIN
+       (ordem é CRÍTICA)
+  ========================== -->
 
-  <!-- CONFIG -->
+  <!-- ⚙️ Configurações globais (Supabase, constantes) -->
   <script src="js/config.js"></script>
 
-  <!-- HELPERS -->
+  <!-- 🧠 Helpers utilitários (showMsg, escapeHtml, etc.) -->
   <script src="js/helpers.js"></script>
 
-  <!-- UI -->
+  <!-- 🧩 UI (abas, estados visuais, feedbacks) -->
   <script src="js/admin-ui.js"></script>
 
-  <!-- CRUDs -->
+  <!-- 📦 CRUDs (NÃO criam Supabase nem variáveis globais duplicadas) -->
   <script src="js/admin-donas.js"></script>
   <script src="js/admin-condominios.js"></script>
   <script src="js/admin-produtos.js"></script>
 
-  <!-- INIT -->
+  <!-- 🚀 Inicialização geral -->
   <script src="js/admin-init.js"></script>
 </body>
 </html>
-
-
-
