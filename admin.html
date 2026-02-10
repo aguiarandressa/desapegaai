@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin — DesapegaAi</title>
 
-  <!-- 🔐 Proteção simples -->
+  <!-- 🔐 Proteção simples (MVP) -->
   <script>
     (function () {
       const senhaCorreta = "@dmin123";
@@ -28,41 +28,122 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-
 <body>
-  <div class="container">
+<div class="container">
 
-    <!-- TABS -->
-    <button id="tabProdutoForm">Novo Produto</button>
-    <button id="tabProdutoList">Lista</button>
+  <!-- =========================
+       TOPO
+  ========================== -->
+  <header class="admin-header">
+    <h1>Admin — DesapegaAi</h1>
+    <div class="header-actions">
+      <button id="btnReload">Recarregar</button>
+      <button id="btnLogout">Sair</button>
+    </div>
+  </header>
+
+  <!-- =========================
+       PRODUTOS
+  ========================== -->
+  <section class="card">
+
+    <div class="tabs">
+      <button id="tabProdutoForm" class="active">Cadastrar / Editar</button>
+      <button id="tabProdutoList">Lista</button>
+    </_toggle_tabs>
 
     <!-- FORM PRODUTO -->
     <div id="produtoFormWrap">
-      <input id="p_nome" placeholder="Nome" />
-      <input id="p_preco" type="number" />
+
+      <h2 id="modoTexto">Novo produto</h2>
+      <div>ID: <span id="produtoIdTexto">—</span></div>
+
+      <input id="p_nome" placeholder="Nome do produto *" />
+      <input id="p_preco" type="number" placeholder="Preço (R$) *" />
+      <textarea id="p_descricao" placeholder="Descrição"></textarea>
+
       <select id="p_categoria"></select>
+
+      <select id="p_ativo">
+        <option value="true">Ativo</option>
+        <option value="false">Inativo</option>
+      </select>
+
       <select id="p_dona"></select>
       <select id="p_condominio"></select>
-      <input id="p_imagem" type="file" />
-      <img id="p_preview" style="display:none" />
-      <div id="p_preview_text"></div>
-      <button id="btnSalvarProduto">Salvar</button>
-      <button id="btnLimparProduto">Limpar</button>
-      <div id="msgProduto"></div>
+
+      <input id="p_imagem" type="file" accept="image/*" />
+      <img id="p_preview" style="display:none;max-width:150px" />
+      <div id="p_preview_text">Nenhuma imagem selecionada.</div>
+
+      <button id="btnSalvarProduto">Salvar produto</button>
+      <button id="btnLimparProduto" type="button">Limpar</button>
+
+      <div id="msgProduto" class="msg"></div>
     </div>
 
-    <!-- LISTA -->
+    <!-- LISTA PRODUTOS -->
     <div id="produtoListWrap" style="display:none">
-      <input id="q_busca" placeholder="Buscar" />
-      <select id="q_status"></select>
-      <select id="q_cat"></select>
-      <select id="q_cond"></select>
-      <button id="btnAplicarFiltros">Aplicar</button>
-      <button id="btnLimparFiltros">Limpar</button>
+
+      <div class="filters">
+        <input id="q_busca" placeholder="Buscar..." />
+        <select id="q_status">
+          <option value="all">Todos</option>
+          <option value="true">Ativos</option>
+          <option value="false">Inativos</option>
+        </select>
+        <select id="q_cat"></select>
+        <select id="q_cond"></select>
+
+        <button id="btnAplicarFiltros">Aplicar</button>
+        <button id="btnLimparFiltros">Limpar</button>
+      </div>
+
       <div id="contagemProdutos"></div>
       <div id="listaProdutos"></div>
+      <div id="msgListaProdutos" class="msg"></div>
     </div>
-</html>
+
+  </section>
+
+  <!-- =========================
+       BASE (DONAS / CONDOMÍNIOS)
+  ========================== -->
+  <section class="card">
+
+    <div class="tabs">
+      <button id="tabDonas" class="active">Donas</button>
+      <button id="tabConds">Condomínios</button>
+    </div>
+
+    <!-- DONAS -->
+    <div id="donasWrap">
+
+      <input id="d_nome" placeholder="Nome da dona *" />
+      <input id="d_whats" placeholder="WhatsApp (55 + DDD + número) *" />
+      <button id="btnAddDona">Cadastrar dona</button>
+
+      <div id="msgDona" class="msg"></div>
+      <div id="listaDonas"></div>
+    </div>
+
+    <!-- CONDOMÍNIOS -->
+    <div id="condsWrap" style="display:none">
+
+      <input id="c_nome" placeholder="Nome do condomínio *" />
+      <button id="btnAddCond">Cadastrar condomínio</button>
+
+      <div id="msgCond" class="msg"></div>
+      <div id="listaConds"></div>
+    </div>
+
+  </section>
+
+</div>
+
+<!-- =========================
+     SCRIPTS
+========================== -->
 
 <!-- CONFIG -->
 <script src="js/config.js"></script>
@@ -81,4 +162,5 @@
 <!-- INIT -->
 <script src="js/admin-init.js"></script>
 
-  
+</body>
+</html>
