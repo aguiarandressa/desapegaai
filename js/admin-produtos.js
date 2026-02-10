@@ -272,14 +272,20 @@ function editProduto(id) {
 // =============================
 // LISTA / FILTROS
 // =============================
-btnAplicarFiltros.addEventListener("click", renderListaProdutos);
-btnLimparFiltros.addEventListener("click", () => {
-  q_busca.value = "";
-  q_status.value = "all";
-  q_cat.value = "all";
-  q_cond.value = "all";
-  renderListaProdutos();
-});
+if (btnAplicarFiltros) {
+  btnAplicarFiltros.addEventListener("click", renderListaProdutos);
+}
+
+if (btnLimparFiltros) {
+  btnLimparFiltros.addEventListener("click", () => {
+    if (q_busca) q_busca.value = "";
+    if (q_status) q_status.value = "all";
+    if (q_cat) q_cat.value = "all";
+    if (q_cond) q_cond.value = "all";
+    renderListaProdutos();
+  });
+}
+
 
 function renderListaProdutos() {
   let list = [...produtos];
