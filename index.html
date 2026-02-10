@@ -1,166 +1,244 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>DesapegaAi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>DesapegaAi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f3f4f6;
-    }
+<style>
+:root {
+  --bg:#f5f5f5;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --green:#16a34a;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+.container {
+  max-width:1100px;
+  margin:auto;
+  padding:24px;
+}
 
-    .section-title {
-      margin: 30px 0 15px;
-      font-size: 20px;
-      color: #111827;
-    }
+h1 { text-align:center; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
+/* FILTROS */
+.filters {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:20px 0 30px;
+  flex-wrap:wrap;
+}
+.filter-btn {
+  padding:8px 14px;
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  background:#fff;
+  cursor:pointer;
+}
+.filter-btn.active {
+  background:#111827;
+  color:#fff;
+}
 
-    /* CARD */
-    .product-card {
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+/* GRID */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+}
 
-    .product-image img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
+/* CARD */
+.product-card {
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+.product-image img {
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+.product-content { padding:16px; }
+.badge {
+  font-size:12px;
+  background:#eef2ff;
+  padding:4px 10px;
+  border-radius:999px;
+  display:inline-block;
+}
+.product-title { font-weight:bold; margin:8px 0; }
+.product-price {
+  font-size:18px;
+  font-weight:800;
+  color:var(--green);
+}
+.product-id { font-size:12px; color:var(--muted); }
 
-    .product-content {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+.add-btn {
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:var(--green);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .product-category {
-      font-size: 12px;
-      color: #64748b;
-      background: #f1f5f9;
-      padding: 4px 10px;
-      border-radius: 999px;
-      width: fit-content;
-    }
-
-    .product-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0;
-      color: #0f172a;
-    }
-
-    .product-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-    }
-
-    .product-price {
-      font-size: 16px;
-      font-weight: 800;
-      color: #16a34a;
-    }
-
-    .product-id {
-      font-size: 11px;
-      color: #94a3b8;
-    }
-
-    .product-action {
-      padding: 8px 14px;
-      border-radius: 10px;
-      background: #16a34a;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .product-action:hover {
-      background: #15803d;
-    }
-  </style>
+/* CARRINHO */
+.cart {
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#ffffff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  padding:16px;
+  width:260px;
+}
+.cart h3 { margin:0 0 10px; }
+.cart-items {
+  font-size:14px;
+  max-height:150px;
+  overflow:auto;
+}
+.cart-total {
+  margin-top:10px;
+  font-weight:bold;
+}
+.cart-btn {
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#111827;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>DesapegaAi</h1>
+<div class="container">
+  <h1>DesapegaAi</h1>
 
-    <!-- TODOS -->
-    <div class="section-title">Todos</div>
-    <div class="grid">
+  <div class="grid">
 
-      <!-- PRODUTO -->
-      <div class="product-card">
-        <div class="product-image">
-          <img src="chinelo-infantil-22.png" alt="Chinelo Infantil tamanho 22">
-        </div>
-
-        <div class="product-content">
-          <span class="product-category">Calçados • Infantil • Usado</span>
-
-          <h3 class="product-title">Chinelo Infantil</h3>
-
-          <div class="product-footer">
-            <div>
-              <div class="product-price">R$ 5,00</div>
-              <div class="product-id">ID: CAL001 • Tam. 22</div>
-            </div>
-
-            <a
-              href="https://wa.me/5551981451341?text=Tenho%20interesse%20no%20produto%20CAL001%20-%20Chinelo%20Infantil"
-              class="product-action"
-              target="_blank"
-            >
-              Eu quero
-            </a>
-          </div>
-        </div>
+    <!-- PRODUTO 1 -->
+    <div class="product-card calçados infantil">
+      <div class="product-image">
+        <img src="chinelo-infantil-22.png">
       </div>
-
+      <div class="product-content">
+        <span class="badge">Calçados • Infantil</span>
+        <div class="product-title">Chinelo Infantil</div>
+        <div class="product-price">R$ 5,00</div>
+        <div class="product-id">CAL001 • Tam 22</div>
+        <button class="add-btn"
+          onclick="addToCart('Chinelo Infantil','CAL001',5)">
+          Adicionar ao carrinho
+        </button>
+      </div>
     </div>
 
-    <!-- CALÇADOS -->
-    <div class="section-title">Calçados</div>
-    <div class="grid">
-      <!-- Mesmo produto reaproveitado -->
-      <!-- (em versões futuras podemos automatizar) -->
-      <!-- copia o card aqui se quiser -->
+    <!-- SIMULADOS -->
+    <div class="product-card roupas">
+      <div class="product-content">
+        <span class="badge">Roupas</span>
+        <div class="product-title">Camiseta Infantil</div>
+        <div class="product-price">R$ 15,00</div>
+        <div class="product-id">R001</div>
+        <button class="add-btn"
+          onclick="addToCart('Camiseta Infantil','R001',15)">
+          Adicionar ao carrinho
+        </button>
+      </div>
     </div>
 
-    <!-- INFANTIL -->
-    <div class="section-title">Infantil</div>
-    <div class="grid">
-      <!-- copia o mesmo card aqui -->
+    <div class="product-card acessorios">
+      <div class="product-content">
+        <span class="badge">Acessórios</span>
+        <div class="product-title">Bolsa Feminina</div>
+        <div class="product-price">R$ 40,00</div>
+        <div class="product-id">A001</div>
+        <button class="add-btn"
+          onclick="addToCart('Bolsa Feminina','A001',40)">
+          Adicionar ao carrinho
+        </button>
+      </div>
     </div>
 
   </div>
+</div>
+
+<!-- CARRINHO -->
+<div class="cart">
+  <h3>🛒 Carrinho</h3>
+  <div class="cart-items" id="cartItems">Vazio</div>
+  <div class="cart-total" id="cartTotal">Total: R$ 0,00</div>
+  <button class="cart-btn" onclick="sendWhatsApp()">
+    Finalizar no WhatsApp
+  </button>
+</div>
+
+<script>
+let cart = [];
+
+function addToCart(name,id,price) {
+  cart.push({name,id,price});
+  renderCart();
+}
+
+function renderCart() {
+  const list = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+
+  if(cart.length === 0) {
+    list.innerHTML = 'Vazio';
+    totalEl.innerHTML = 'Total: R$ 0,00';
+    return;
+  }
+
+  let total = 0;
+  list.innerHTML = cart.map(p => {
+    total += p.price;
+    return `• ${p.name} (${p.id}) - R$ ${p.price},00`;
+  }).join('<br>');
+
+  totalEl.innerHTML = `Total: R$ ${total},00`;
+}
+
+function sendWhatsApp() {
+  if(cart.length === 0) return alert('Carrinho vazio');
+
+  let msg = 'Olá! Tenho interesse nos seguintes produtos:%0A%0A';
+  let total = 0;
+
+  cart.forEach(p => {
+    msg += `• ${p.name} (${p.id}) - R$ ${p.price},00%0A`;
+    total += p.price;
+  });
+
+  msg += `%0A*Total: R$ ${total},00*`;
+
+  window.open(
+    'https://wa.me/5551982003423?text=' + msg,
+    '_blank'
+  );
+}
+</script>
 </body>
 </html>
