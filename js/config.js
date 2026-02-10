@@ -1,27 +1,24 @@
 /* =========================
-   CONFIGURAÇÕES GLOBAIS (ADMIN)
+   CONFIGURAÇÕES GLOBAIS
    ========================= */
 
-(function () {
-  // ---- Config (coloque tudo em window para ficar acessível e evitar redeclaração acidental)
-  window.SUPABASE_URL = "https://ssspgiiftrhvdjidndzi.supabase.co";
-  window.SUPABASE_ANON_KEY = "sb_publishable_igD1PWk91A-ySowhPqJdA_484zncZX";
-  window.BUCKET_PRODUTOS = "produtos";
+const SUPABASE_URL = "https://ssspgiiftrhvdjidndzi.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_igD1PWk91A-ySowhPqJdA_484zncZX";
 
-  // ---- Garantir que o CDN do Supabase foi carregado
-  if (!window.supabaseJs || typeof window.supabaseJs.createClient !== "function") {
-    console.error("Supabase JS não carregou. Verifique o <script src> do CDN no admin.html");
-    return;
-  }
+const BUCKET_PRODUTOS = "produtos";
 
-  // ---- Singleton do client
+// =========================
+// CLIENTE SUPABASE (singleton)
+// =========================
+
+if (!window.supabaseClient) {
   if (!window.supabase) {
-    window.supabase = window.supabaseJs.createClient(
-      window.SUPABASE_URL,
-      window.SUPABASE_ANON_KEY
+    console.error("❌ Supabase JS não carregou. Verifique o script CDN no admin.html");
+  } else {
+    window.supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
     );
+    console.log("✅ Supabase conectado com sucesso");
   }
-
-  // Atalho opcional (pra ficar curto nos outros arquivos)
-  window.sb = window.supabase;
-})();
+}
