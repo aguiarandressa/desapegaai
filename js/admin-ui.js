@@ -25,7 +25,7 @@ const tabProdutoForm = document.getElementById("tabProdutoForm");
 const tabProdutoList = document.getElementById("tabProdutoList");
 const produtoFormWrap = document.getElementById("produtoFormWrap");
 const produtoListWrap = document.getElementById("produtoListWrap");
-const msgProduto = document.getElementById("msgProduto");
+
 
 // =========================
 // MENSAGENS (GLOBAIS DO ADMIN)
