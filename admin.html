@@ -37,26 +37,25 @@
     -->
   </div>
 
-  <!-- =========================
-       SCRIPTS DO ADMIN
-       (ordem é CRÍTICA)
-  ========================== -->
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- ⚙️ Configurações globais (Supabase, constantes) -->
-  <script src="js/config.js"></script>
+<!-- CONFIG (sempre primeiro) -->
+<script src="js/config.js"></script>
 
-  <!-- 🧠 Helpers utilitários (showMsg, escapeHtml, etc.) -->
-  <script src="js/helpers.js"></script>
+<!-- HELPERS -->
+<script src="js/helpers.js"></script>
 
-  <!-- 🧩 UI (abas, estados visuais, feedbacks) -->
-  <script src="js/admin-ui.js"></script>
+<!-- UI -->
+<script src="js/admin-ui.js"></script>
 
-  <!-- 📦 CRUDs (NÃO criam Supabase nem variáveis globais duplicadas) -->
-  <script src="js/admin-donas.js"></script>
-  <script src="js/admin-condominios.js"></script>
-  <script src="js/admin-produtos.js"></script>
+<!-- CRUDs -->
+<script src="js/admin-donas.js"></script>
+<script src="js/admin-condominios.js"></script>
+<script src="js/admin-produtos.js"></script>
 
-  <!-- 🚀 Inicialização geral -->
-  <script src="js/admin-init.js"></script>
+<!-- INIT (sempre por último) -->
+<script src="js/admin-init.js"></script>
+
 </body>
 </html>
