@@ -30,7 +30,6 @@ const q_cat = document.getElementById("q_cat");
 const q_cond = document.getElementById("q_cond");
 const btnAplicarFiltros = document.getElementById("btnAplicarFiltros");
 const btnLimparFiltros = document.getElementById("btnLimparFiltros");
-const msgListaProdutos = document.getElementById("msgListaProdutos");
 
 // ESTADO
 let produtos = [];
