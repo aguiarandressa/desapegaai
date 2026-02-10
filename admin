@@ -1,155 +1,1250 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>DesapegaAi • Painel Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — DesapegaAi</title>
 
-<style>
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background:#f5f5f5;
-  margin:0;
-}
+  <!-- ====== PROTEÇÃO POR SENHA (MVP) ====== -->
+  <script>
+    (function () {
+      const senhaCorreta = "@dmin123";
+      const liberado = sessionStorage.getItem("admin_ok");
 
-.container {
-  max-width:900px;
-  margin:auto;
-  padding:24px;
-}
+      if (!liberado) {
+        const senha = prompt("Digite a senha do painel administrativo (Admin DesapegaAi):");
+        if (senha !== senhaCorreta) {
+          alert("Senha incorreta.");
+          window.location.href = "index.html";
+        } else {
+          sessionStorage.setItem("admin_ok", "true");
+        }
+      }
+    })();
+  </script>
 
-h1 {
-  margin-bottom:20px;
-}
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-.card {
-  background:#fff;
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
+  <style>
+    :root{
+      --bg:#f3f5f7;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --green:#16a34a;
+      --red:#dc2626;
+      --blue:#2563eb;
+      --amber:#f59e0b;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --radius: 16px;
+    }
 
-label {
-  display:block;
-  margin-top:12px;
-  font-weight:bold;
-}
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-input, select {
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-}
+    .container{
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-button {
-  margin-top:16px;
-  padding:12px;
-  background:#16a34a;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    header{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom: 16px;
+    }
 
-pre {
-  background:#111827;
-  color:#fff;
-  padding:16px;
-  overflow:auto;
-}
-</style>
+    h1{
+      margin:0;
+      font-size: 24px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .btn.primary{
+      background: var(--text);
+      color:#fff;
+      border-color: var(--text);
+    }
+    .btn.green{
+      background: var(--green);
+      color:#fff;
+      border-color: var(--green);
+    }
+    .btn.red{
+      background: var(--red);
+      color:#fff;
+      border-color: var(--red);
+    }
+    .btn.blue{
+      background: var(--blue);
+      color:#fff;
+      border-color: var(--blue);
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      align-items:start;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+    }
+
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: -2px;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label{
+      display:block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 6px 0 6px;
+    }
+
+    input, select, textarea{
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+
+    .inline{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      background:#fff;
+    }
+    .pill strong{ color: var(--text); }
+
+    .msg{
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background:#fff;
+      font-size: 13px;
+      line-height: 1.35;
+      margin-top: 10px;
+      display:none;
+    }
+    .msg.show{ display:block; }
+    .msg.ok{ border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.08); }
+    .msg.err{ border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.08); }
+    .msg.warn{ border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10); }
+
+    .preview{
+      width: 100%;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background:#fafafa;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .preview img{
+      width: 92px;
+      height: 92px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background:#fff;
+    }
+    .preview small{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      display:block;
+    }
+
+    /* Tabs simples */
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .tab{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .tab.active{
+      background: var(--text);
+      border-color: var(--text);
+      color:#fff;
+    }
+
+    /* Listas */
+    .list{
+      margin-top: 10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .item{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      background:#fff;
+    }
+
+    .item .meta{
+      display:flex;
+      flex-direction:column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .item .title{
+      font-weight: 900;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .item .sub{
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size: 12px;
+      font-weight: 900;
+      border-radius: 999px;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      background:#fff;
+      width: fit-content;
+    }
+    .status.on{ color: var(--green); border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.08); }
+    .status.off{ color: var(--muted); border-color: rgba(107,114,128,.35); background: rgba(107,114,128,.10); }
+
+    .item .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      min-width: 170px;
+    }
+
+    .mini{
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .toolbar .left, .toolbar .right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .muted{
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Mobile */
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ align-items:flex-start; }
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
-  <h1>🛠️ Painel Admin • DesapegaAi</h1>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Admin — DesapegaAi</h1>
+        <p class="subtitle">
+          Painel simples e seguro (MVP) para cadastrar <strong>donas</strong>, <strong>condomínios</strong> e <strong>produtos</strong> com imagens reais no Supabase.
+          <br/>DUA: prevenção de erros, campos guiados e feedback claro.
+        </p>
+      </div>
 
-  <!-- DONAS -->
-  <div class="card">
-    <h2>Cadastrar Dona</h2>
+      <div class="top-actions">
+        <button class="btn" id="btnReload" type="button">Recarregar</button>
+        <button class="btn primary" id="btnLogout" type="button">Sair</button>
+      </div>
+    </header>
 
-    <label>ID</label>
-    <input id="donaId">
+    <div class="grid">
+      <!-- ===== COLUNA ESQUERDA: PRODUTOS ===== -->
+      <section class="card">
+        <h2>Produtos</h2>
+        <div class="hint">
+          Cadastre e edite produtos. <strong>Não apagamos</strong> (evita erro): use <strong>Ativo/Inativo</strong> para esconder do catálogo.
+        </div>
 
-    <label>Nome</label>
-    <input id="donaNome">
+        <div class="tabs" role="tablist" aria-label="Abas do admin">
+          <button class="tab active" id="tabProdutoForm" type="button">Cadastrar / Editar</button>
+          <button class="tab" id="tabProdutoList" type="button">Lista</button>
+        </div>
 
-    <label>WhatsApp</label>
-    <input id="donaWhats">
+        <!-- FORM PRODUTO -->
+        <div id="produtoFormWrap">
+          <div class="row">
+            <div>
+              <label for="p_nome">Nome do produto *</label>
+              <input id="p_nome" placeholder="Ex: Chinelo Infantil" autocomplete="off" />
+            </div>
+            <div>
+              <label for="p_preco">Preço (R$) *</label>
+              <input id="p_preco" type="number" step="0.01" min="0" placeholder="Ex: 5.00" />
+            </div>
+          </div>
 
-    <button onclick="addDona()">Salvar Dona</button>
+          <label for="p_descricao">Descrição</label>
+          <textarea id="p_descricao" placeholder="Ex: Chinelo infantil tamanho 22, usado, em bom estado."></textarea>
+
+          <div class="row">
+            <div>
+              <label for="p_categoria">Categoria *</label>
+              <select id="p_categoria"></select>
+              <div class="hint" style="margin:8px 0 0;">Categorias padronizadas ajudam o filtro do catálogo (evita variações).</div>
+            </div>
+            <div>
+              <label for="p_ativo">Status</label>
+              <select id="p_ativo">
+                <option value="true">Ativo (aparece no catálogo)</option>
+                <option value="false">Inativo (não aparece)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="p_dona">Dona *</label>
+              <select id="p_dona"></select>
+            </div>
+            <div>
+              <label for="p_condominio">Condomínio *</label>
+              <select id="p_condominio"></select>
+            </div>
+          </div>
+
+          <label for="p_imagem">Imagem do produto *</label>
+          <input id="p_imagem" type="file" accept="image/*" />
+
+          <div class="preview" aria-live="polite">
+            <img id="p_preview" alt="Prévia da imagem" src="" style="display:none;" />
+            <div>
+              <div class="pill"><strong>Dica:</strong> use foto nítida e centralizada.</div>
+              <small id="p_preview_text">Nenhuma imagem selecionada ainda.</small>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="left">
+              <span class="pill">Modo: <strong id="modoTexto">Novo produto</strong></span>
+              <span class="pill">ID: <strong id="produtoIdTexto">—</strong></span>
+            </div>
+            <div class="right">
+              <button class="btn" id="btnLimparProduto" type="button">Limpar</button>
+              <button class="btn green" id="btnSalvarProduto" type="button">Salvar produto</button>
+            </div>
+          </div>
+
+          <div id="msgProduto" class="msg" role="status"></div>
+        </div>
+
+        <!-- LISTA PRODUTO -->
+        <div id="produtoListWrap" style="display:none;">
+          <div class="row">
+            <div>
+              <label for="q_busca">Buscar</label>
+              <input id="q_busca" placeholder="Digite nome ou descrição..." />
+            </div>
+            <div>
+              <label for="q_status">Status</label>
+              <select id="q_status">
+                <option value="all">Todos</option>
+                <option value="true">Somente ativos</option>
+                <option value="false">Somente inativos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="q_cat">Categoria</label>
+              <select id="q_cat"></select>
+            </div>
+            <div>
+              <label for="q_cond">Condomínio</label>
+              <select id="q_cond"></select>
+            </div>
+          </div>
+
+          <div class="toolbar" style="margin-top: 0;">
+            <div class="left">
+              <span class="muted" id="contagemProdutos">0 produtos</span>
+            </div>
+            <div class="right">
+              <button class="btn" id="btnAplicarFiltros" type="button">Aplicar filtros</button>
+              <button class="btn" id="btnLimparFiltros" type="button">Limpar filtros</button>
+            </div>
+          </div>
+
+          <div id="listaProdutos" class="list"></div>
+          <div id="msgListaProdutos" class="msg" role="status"></div>
+        </div>
+      </section>
+
+      <!-- ===== COLUNA DIREITA: DONAS + CONDOMÍNIOS ===== -->
+      <aside class="card">
+        <h2>Cadastros base</h2>
+        <div class="hint">
+          Primeiro cadastre <strong>Donas</strong> e <strong>Condomínios</strong>. Depois, cadastre produtos selecionando nos campos.
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" id="tabDonas" type="button">Donas</button>
+          <button class="tab" id="tabConds" type="button">Condomínios</button>
+        </div>
+
+        <!-- DONAS -->
+        <div id="donasWrap">
+          <label for="d_nome">Nome *</label>
+          <input id="d_nome" placeholder="Ex: Andressa" />
+
+          <label for="d_whats">WhatsApp (somente números) *</label>
+          <input id="d_whats" placeholder="Ex: 5551981451341" inputmode="numeric" />
+
+          <div class="toolbar">
+            <div class="left">
+              <span class="pill">Dica: use o formato <strong>55 + DDD + número</strong></span>
+            </div>
+            <div class="right">
+              <button class="btn green mini" id="btnAddDona" type="button">Cadastrar</button>
+            </div>
+          </div>
+
+          <div id="msgDona" class="msg" role="status"></div>
+
+          <div class="list" id="listaDonas"></div>
+        </div>
+
+        <!-- CONDOMINIOS -->
+        <div id="condsWrap" style="display:none;">
+          <label for="c_nome">Nome do condomínio *</label>
+          <input id="c_nome" placeholder="Ex: My Urban Life" />
+
+          <div class="toolbar">
+            <div class="left">
+              <span class="pill">Dica: use o nome oficial</span>
+            </div>
+            <div class="right">
+              <button class="btn green mini" id="btnAddCond" type="button">Cadastrar</button>
+            </div>
+          </div>
+
+          <div id="msgCond" class="msg" role="status"></div>
+
+          <div class="list" id="listaConds"></div>
+        </div>
+      </aside>
+    </div>
   </div>
 
-  <!-- PRODUTO -->
-  <div class="card">
-    <h2>Cadastrar Produto</h2>
+  <script>
+    // =============================
+    //  CONFIG SUPABASE
+    // =============================
+    const SUPABASE_URL = "SUA_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
+    const BUCKET = "produtos"; // bucket_id confirmado nas policies
 
-    <label>ID</label>
-    <input id="prodId">
+    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <label>Nome</label>
-    <input id="prodNome">
+    // =============================
+    //  CATEGORIAS PADRÃO (evita retrabalho)
+    // =============================
+    const CATEGORIAS = [
+      "Calçados",
+      "Roupas",
+      "Infantil",
+      "Brinquedos",
+      "Acessórios",
+      "Casa",
+      "Outros"
+    ];
 
-    <label>Categoria</label>
-    <input id="prodCat">
+    // =============================
+    //  HELPERS (DUA: mensagens claras)
+    // =============================
+    function showMsg(el, type, text){
+      el.className = "msg show " + (type || "");
+      el.textContent = text;
+    }
+    function hideMsg(el){
+      el.className = "msg";
+      el.textContent = "";
+    }
 
-    <label>Subcategoria</label>
-    <input id="prodSub">
+    function toBRL(n){
+      // exibição simples (não é currency formatter completo, mas atende)
+      try {
+        return Number(n).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+      } catch {
+        return "R$ " + (n ?? 0);
+      }
+    }
 
-    <label>Preço</label>
-    <input id="prodPreco" type="number">
+    function onlyDigits(s){ return (s || "").replace(/\D+/g, ""); }
 
-    <label>Dona (ID)</label>
-    <input id="prodDona">
+    function uuid(){
+      return crypto.randomUUID();
+    }
 
-    <label>Imagem (nome do arquivo)</label>
-    <input id="prodImg">
+    function safeTrim(s){ return (s ?? "").toString().trim(); }
 
-    <button onclick="addProduto()">Salvar Produto</button>
-  </div>
+    function normalizePrice(v){
+      // aceita "5" ou "5.00"
+      const n = Number(v);
+      return Number.isFinite(n) ? n : NaN;
+    }
 
-  <!-- SAÍDA JSON -->
-  <div class="card">
-    <h2>📄 JSON Gerado</h2>
-    <pre id="output">{}</pre>
-  </div>
-</div>
+    function fileIsImage(file){
+      return file && file.type && file.type.startsWith("image/");
+    }
 
-<script>
-let donas = [];
-let produtos = [];
+    function buildPublicUrl(path){
+      // Padrão do Supabase public object URL
+      return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(path)}`;
+    }
 
-function addDona() {
-  donas.push({
-    id: donaId.value,
-    nome: donaNome.value,
-    whatsapp: donaWhats.value
-  });
-  render();
-}
+    // =============================
+    //  ESTADO DO APP
+    // =============================
+    let donas = [];
+    let condominios = [];
+    let produtos = [];
 
-function addProduto() {
-  produtos.push({
-    id: prodId.value,
-    nome: prodNome.value,
-    categoria: prodCat.value,
-    subcategoria: prodSub.value,
-    preco: Number(prodPreco.value),
-    donaId: prodDona.value,
-    imagens: [prodImg.value],
-    ativo: true
-  });
-  render();
-}
+    let editingProductId = null;
+    let editingProductOldImageUrl = null; // para referência, se trocar imagem
 
-function render() {
-  document.getElementById('output').textContent = JSON.stringify({
-    donas,
-    produtos
-  }, null, 2);
-}
-</script>
+    // =============================
+    //  ELEMENTOS
+    // =============================
+    const btnReload = document.getElementById("btnReload");
+    const btnLogout = document.getElementById("btnLogout");
+
+    // tabs produtos
+    const tabProdutoForm = document.getElementById("tabProdutoForm");
+    const tabProdutoList = document.getElementById("tabProdutoList");
+    const produtoFormWrap = document.getElementById("produtoFormWrap");
+    const produtoListWrap = document.getElementById("produtoListWrap");
+
+    // form produto
+    const p_nome = document.getElementById("p_nome");
+    const p_preco = document.getElementById("p_preco");
+    const p_descricao = document.getElementById("p_descricao");
+    const p_categoria = document.getElementById("p_categoria");
+    const p_ativo = document.getElementById("p_ativo");
+    const p_dona = document.getElementById("p_dona");
+    const p_condominio = document.getElementById("p_condominio");
+    const p_imagem = document.getElementById("p_imagem");
+    const p_preview = document.getElementById("p_preview");
+    const p_preview_text = document.getElementById("p_preview_text");
+    const modoTexto = document.getElementById("modoTexto");
+    const produtoIdTexto = document.getElementById("produtoIdTexto");
+    const btnSalvarProduto = document.getElementById("btnSalvarProduto");
+    const btnLimparProduto = document.getElementById("btnLimparProduto");
+    const msgProduto = document.getElementById("msgProduto");
+
+    // lista produtos
+    const q_busca = document.getElementById("q_busca");
+    const q_status = document.getElementById("q_status");
+    const q_cat = document.getElementById("q_cat");
+    const q_cond = document.getElementById("q_cond");
+    const btnAplicarFiltros = document.getElementById("btnAplicarFiltros");
+    const btnLimparFiltros = document.getElementById("btnLimparFiltros");
+    const contagemProdutos = document.getElementById("contagemProdutos");
+    const listaProdutos = document.getElementById("listaProdutos");
+    const msgListaProdutos = document.getElementById("msgListaProdutos");
+
+    // tabs base
+    const tabDonas = document.getElementById("tabDonas");
+    const tabConds = document.getElementById("tabConds");
+    const donasWrap = document.getElementById("donasWrap");
+    const condsWrap = document.getElementById("condsWrap");
+
+    // donas
+    const d_nome = document.getElementById("d_nome");
+    const d_whats = document.getElementById("d_whats");
+    const btnAddDona = document.getElementById("btnAddDona");
+    const listaDonas = document.getElementById("listaDonas");
+    const msgDona = document.getElementById("msgDona");
+
+    // condominios
+    const c_nome = document.getElementById("c_nome");
+    const btnAddCond = document.getElementById("btnAddCond");
+    const listaConds = document.getElementById("listaConds");
+    const msgCond = document.getElementById("msgCond");
+
+    // =============================
+    //  UI: Tabs
+    // =============================
+    function setProdutoTab(which){
+      const isForm = which === "form";
+      tabProdutoForm.classList.toggle("active", isForm);
+      tabProdutoList.classList.toggle("active", !isForm);
+      produtoFormWrap.style.display = isForm ? "block" : "none";
+      produtoListWrap.style.display = isForm ? "none" : "block";
+      hideMsg(msgListaProdutos);
+      hideMsg(msgProduto);
+    }
+
+    function setBaseTab(which){
+      const isDonas = which === "donas";
+      tabDonas.classList.toggle("active", isDonas);
+      tabConds.classList.toggle("active", !isDonas);
+      donasWrap.style.display = isDonas ? "block" : "none";
+      condsWrap.style.display = isDonas ? "none" : "block";
+      hideMsg(msgDona);
+      hideMsg(msgCond);
+    }
+
+    tabProdutoForm.addEventListener("click", () => setProdutoTab("form"));
+    tabProdutoList.addEventListener("click", () => { setProdutoTab("list"); renderListaProdutos(); });
+
+    tabDonas.addEventListener("click", () => setBaseTab("donas"));
+    tabConds.addEventListener("click", () => setBaseTab("conds"));
+
+    // =============================
+    //  UI: Top actions
+    // =============================
+    btnReload.addEventListener("click", () => init(true));
+    btnLogout.addEventListener("click", () => {
+      sessionStorage.removeItem("admin_ok");
+      window.location.reload();
+    });
+
+    // =============================
+    //  PREVIEW IMAGEM
+    // =============================
+    p_imagem.addEventListener("change", () => {
+      const file = p_imagem.files && p_imagem.files[0];
+      if (!file){
+        p_preview.style.display = "none";
+        p_preview.src = "";
+        p_preview_text.textContent = "Nenhuma imagem selecionada ainda.";
+        return;
+      }
+      if (!fileIsImage(file)){
+        showMsg(msgProduto, "err", "Selecione um arquivo de imagem válido (JPG/PNG/WebP).");
+        p_imagem.value = "";
+        p_preview.style.display = "none";
+        p_preview.src = "";
+        p_preview_text.textContent = "Nenhuma imagem selecionada ainda.";
+        return;
+      }
+      hideMsg(msgProduto);
+      const url = URL.createObjectURL(file);
+      p_preview.src = url;
+      p_preview.style.display = "block";
+      p_preview_text.textContent = `Arquivo selecionado: ${file.name}`;
+    });
+
+    // =============================
+    //  POPULAR SELECTS PADRÃO
+    // =============================
+    function fillCategorias(){
+      p_categoria.innerHTML = CATEGORIAS.map(c => `<option value="${c}">${c}</option>`).join("");
+      q_cat.innerHTML = `<option value="all">Todas</option>` + CATEGORIAS.map(c => `<option value="${c}">${c}</option>`).join("");
+    }
+
+    // =============================
+    //  LOADS (Supabase)
+    // =============================
+    async function loadDonas(){
+      const { data, error } = await supabase.from("donas").select("*").order("nome", { ascending: true });
+      if (error) throw error;
+      donas = data || [];
+      renderDonas();
+      fillDonasSelect();
+    }
+
+    async function loadConds(){
+      const { data, error } = await supabase.from("condominios").select("*").order("nome", { ascending: true });
+      if (error) throw error;
+      condominios = data || [];
+      renderConds();
+      fillCondsSelect();
+      fillCondsFilter();
+    }
+
+    async function loadProdutos(){
+      // lista completa (admin) - mais novo primeiro
+      const { data, error } = await supabase.from("produtos").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      produtos = data || [];
+      renderListaProdutos();
+    }
+
+    function fillDonasSelect(){
+      if (!donas.length){
+        p_dona.innerHTML = `<option value="">— Cadastre uma dona primeiro —</option>`;
+        return;
+      }
+      p_dona.innerHTML = `<option value="">Selecione...</option>` + donas.map(d => `<option value="${d.id}">${d.nome}</option>`).join("");
+    }
+
+    function fillCondsSelect(){
+      if (!condominios.length){
+        p_condominio.innerHTML = `<option value="">— Cadastre um condomínio primeiro —</option>`;
+        return;
+      }
+      p_condominio.innerHTML = `<option value="">Selecione...</option>` + condominios.map(c => `<option value="${c.id}">${c.nome}</option>`).join("");
+    }
+
+    function fillCondsFilter(){
+      q_cond.innerHTML = `<option value="all">Todos</option>` + condominios.map(c => `<option value="${c.id}">${c.nome}</option>`).join("");
+    }
+
+    // =============================
+    //  DONAS CRUD
+    // =============================
+    btnAddDona.addEventListener("click", addDona);
+
+    async function addDona(){
+      hideMsg(msgDona);
+      const nome = safeTrim(d_nome.value);
+      const whats = onlyDigits(d_whats.value);
+
+      if (!nome) return showMsg(msgDona, "err", "Informe o nome da dona.");
+      if (!whats || whats.length < 12) return showMsg(msgDona, "err", "Informe um WhatsApp válido (somente números, com DDD). Ex: 5551981451341");
+
+      // evita duplicar pelo whatsapp
+      const exists = donas.some(d => onlyDigits(d.whatsapp) === whats);
+      if (exists) return showMsg(msgDona, "warn", "Já existe uma dona cadastrada com esse WhatsApp.");
+
+      const payload = { id: uuid(), nome, whatsapp: whats };
+
+      const { error } = await supabase.from("donas").insert([payload]);
+      if (error) return showMsg(msgDona, "err", "Erro ao cadastrar dona. Verifique e tente novamente.");
+
+      d_nome.value = "";
+      d_whats.value = "";
+      showMsg(msgDona, "ok", "Dona cadastrada com sucesso!");
+      await loadDonas();
+    }
+
+    async function delDona(id){
+      hideMsg(msgDona);
+      const ok = confirm("Excluir esta dona? (Se houver produtos vinculados, o Supabase pode impedir)");
+      if (!ok) return;
+
+      const { error } = await supabase.from("donas").delete().eq("id", id);
+      if (error) return showMsg(msgDona, "err", "Não foi possível excluir. Pode haver produtos vinculados a esta dona.");
+
+      showMsg(msgDona, "ok", "Dona excluída.");
+      await loadDonas();
+      await loadProdutos();
+    }
+
+    function renderDonas(){
+      listaDonas.innerHTML = "";
+      if (!donas.length){
+        listaDonas.innerHTML = `<div class="msg show warn">Nenhuma dona cadastrada ainda.</div>`;
+        return;
+      }
+
+      donas.forEach(d => {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(d.nome)}</div>
+            <div class="sub">WhatsApp: ${escapeHtml(d.whatsapp)}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red mini" type="button">Excluir</button>
+          </div>
+        `;
+        el.querySelector("button").addEventListener("click", () => delDona(d.id));
+        listaDonas.appendChild(el);
+      });
+    }
+
+    // =============================
+    //  CONDOMINIOS CRUD
+    // =============================
+    btnAddCond.addEventListener("click", addCond);
+
+    async function addCond(){
+      hideMsg(msgCond);
+      const nome = safeTrim(c_nome.value);
+      if (!nome) return showMsg(msgCond, "err", "Informe o nome do condomínio.");
+
+      // evita duplicado por nome
+      const exists = condominios.some(c => safeTrim(c.nome).toLowerCase() === nome.toLowerCase());
+      if (exists) return showMsg(msgCond, "warn", "Este condomínio já está cadastrado.");
+
+      const payload = { id: uuid(), nome };
+
+      const { error } = await supabase.from("condominios").insert([payload]);
+      if (error) return showMsg(msgCond, "err", "Erro ao cadastrar condomínio. Tente novamente.");
+
+      c_nome.value = "";
+      showMsg(msgCond, "ok", "Condomínio cadastrado com sucesso!");
+      await loadConds();
+    }
+
+    async function delCond(id){
+      hideMsg(msgCond);
+      const ok = confirm("Excluir este condomínio? (Se houver produtos vinculados, o Supabase pode impedir)");
+      if (!ok) return;
+
+      const { error } = await supabase.from("condominios").delete().eq("id", id);
+      if (error) return showMsg(msgCond, "err", "Não foi possível excluir. Pode haver produtos vinculados a este condomínio.");
+
+      showMsg(msgCond, "ok", "Condomínio excluído.");
+      await loadConds();
+      await loadProdutos();
+    }
+
+    function renderConds(){
+      listaConds.innerHTML = "";
+      if (!condominios.length){
+        listaConds.innerHTML = `<div class="msg show warn">Nenhum condomínio cadastrado ainda.</div>`;
+        return;
+      }
+
+      condominios.forEach(c => {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(c.nome)}</div>
+            <div class="sub">ID: ${escapeHtml(c.id)}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red mini" type="button">Excluir</button>
+          </div>
+        `;
+        el.querySelector("button").addEventListener("click", () => delCond(c.id));
+        listaConds.appendChild(el);
+      });
+    }
+
+    // =============================
+    //  PRODUTOS CRUD
+    // =============================
+    btnSalvarProduto.addEventListener("click", saveProduto);
+    btnLimparProduto.addEventListener("click", resetProdutoForm);
+
+    function resetProdutoForm(){
+      editingProductId = null;
+      editingProductOldImageUrl = null;
+
+      p_nome.value = "";
+      p_preco.value = "";
+      p_descricao.value = "";
+      p_categoria.value = CATEGORIAS[0] || "";
+      p_ativo.value = "true";
+      p_dona.value = "";
+      p_condominio.value = "";
+      p_imagem.value = "";
+
+      p_preview.style.display = "none";
+      p_preview.src = "";
+      p_preview_text.textContent = "Nenhuma imagem selecionada ainda.";
+
+      modoTexto.textContent = "Novo produto";
+      produtoIdTexto.textContent = "—";
+
+      hideMsg(msgProduto);
+    }
+
+    function validateProduto(){
+      const nome = safeTrim(p_nome.value);
+      const categoria = safeTrim(p_categoria.value);
+      const preco = normalizePrice(p_preco.value);
+      const donaId = p_dona.value;
+      const condId = p_condominio.value;
+      const ativo = (p_ativo.value === "true");
+      const descricao = safeTrim(p_descricao.value);
+
+      if (!nome) return { ok:false, msg:"Informe o nome do produto." };
+      if (!categoria) return { ok:false, msg:"Selecione uma categoria." };
+      if (!Number.isFinite(preco) || preco < 0) return { ok:false, msg:"Informe um preço válido (>= 0)." };
+      if (!donaId) return { ok:false, msg:"Selecione a dona do produto." };
+      if (!condId) return { ok:false, msg:"Selecione o condomínio." };
+
+      // regra: imagem obrigatória ao criar. Ao editar, imagem é opcional.
+      const file = p_imagem.files && p_imagem.files[0];
+      if (!editingProductId && !file) return { ok:false, msg:"Selecione uma imagem do produto (obrigatório no cadastro)." };
+      if (file && !fileIsImage(file)) return { ok:false, msg:"O arquivo selecionado não parece ser uma imagem válida." };
+
+      return {
+        ok:true,
+        data:{ nome, categoria, preco, donaId, condId, ativo, descricao, file }
+      };
+    }
+
+    async function uploadImagem(file){
+      // nome único: timestamp + uuid + extensão original (quando possível)
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const path = `${Date.now()}-${uuid()}.${ext}`;
+
+      const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+        cacheControl: "3600",
+        upsert: false
+      });
+
+      if (error) throw error;
+      return buildPublicUrl(path);
+    }
+
+    async function saveProduto(){
+      hideMsg(msgProduto);
+
+      // DUA: impedir salvar se faltam cadastros base
+      if (!donas.length) return showMsg(msgProduto, "err", "Cadastre pelo menos 1 dona antes de criar produtos.");
+      if (!condominios.length) return showMsg(msgProduto, "err", "Cadastre pelo menos 1 condomínio antes de criar produtos.");
+
+      const v = validateProduto();
+      if (!v.ok) return showMsg(msgProduto, "err", v.msg);
+
+      const { nome, categoria, preco, donaId, condId, ativo, descricao, file } = v.data;
+
+      btnSalvarProduto.disabled = true;
+      btnSalvarProduto.textContent = "Salvando...";
+
+      try {
+        let imagem_url = editingProductOldImageUrl;
+
+        // se selecionou novo arquivo, faz upload e substitui a URL no registro
+        if (file){
+          imagem_url = await uploadImagem(file);
+        }
+
+        if (!imagem_url){
+          // fallback (não deveria acontecer)
+          throw new Error("Falha ao obter URL da imagem.");
+        }
+
+        if (!editingProductId){
+          // criar
+          const payload = {
+            id: uuid(),
+            nome,
+            descricao,
+            categoria,
+            preco,
+            dona_id: donaId,
+            condominio_id: condId,
+            imagem_url,
+            ativo
+          };
+
+          const { error } = await supabase.from("produtos").insert([payload]);
+          if (error) throw error;
+
+          showMsg(msgProduto, "ok", "Produto cadastrado com sucesso!");
+          resetProdutoForm();
+        } else {
+          // atualizar
+          const payload = {
+            nome,
+            descricao,
+            categoria,
+            preco,
+            dona_id: donaId,
+            condominio_id: condId,
+            imagem_url,
+            ativo
+          };
+
+          const { error } = await supabase.from("produtos").update(payload).eq("id", editingProductId);
+          if (error) throw error;
+
+          showMsg(msgProduto, "ok", "Produto atualizado com sucesso!");
+          // mantém em modo edição ou limpa? DUA: limpar evita confusão
+          resetProdutoForm();
+        }
+
+        await loadProdutos();
+
+      } catch (e){
+        console.error(e);
+        showMsg(msgProduto, "err", "Erro ao salvar. Verifique sua conexão e tente novamente.");
+      } finally {
+        btnSalvarProduto.disabled = false;
+        btnSalvarProduto.textContent = "Salvar produto";
+      }
+    }
+
+    async function toggleAtivoProduto(id, novoValor){
+      hideMsg(msgListaProdutos);
+      const { error } = await supabase.from("produtos").update({ ativo: novoValor }).eq("id", id);
+      if (error) return showMsg(msgListaProdutos, "err", "Não foi possível atualizar o status do produto.");
+      await loadProdutos();
+      showMsg(msgListaProdutos, "ok", novoValor ? "Produto ativado (agora aparece no catálogo)." : "Produto desativado (oculto no catálogo).");
+    }
+
+    function editProduto(id){
+      const p = produtos.find(x => x.id === id);
+      if (!p) return;
+
+      editingProductId = p.id;
+      editingProductOldImageUrl = p.imagem_url;
+
+      p_nome.value = p.nome ?? "";
+      p_preco.value = p.preco ?? "";
+      p_descricao.value = p.descricao ?? "";
+      p_categoria.value = p.categoria ?? (CATEGORIAS[0] || "");
+      p_ativo.value = String(!!p.ativo);
+
+      p_dona.value = p.dona_id ?? "";
+      p_condominio.value = p.condominio_id ?? "";
+
+      // preview atual do produto
+      p_preview.src = p.imagem_url || "";
+      if (p.imagem_url){
+        p_preview.style.display = "block";
+        p_preview_text.textContent = "Imagem atual do produto (se quiser trocar, selecione uma nova).";
+      } else {
+        p_preview.style.display = "none";
+        p_preview_text.textContent = "Nenhuma imagem no cadastro (recomendado cadastrar).";
+      }
+      p_imagem.value = "";
+
+      modoTexto.textContent = "Editando produto";
+      produtoIdTexto.textContent = p.id;
+
+      setProdutoTab("form");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showMsg(msgProduto, "warn", "Você está editando um produto. Ao salvar, os dados serão atualizados.");
+    }
+
+    // =============================
+    //  LISTA / FILTROS
+    // =============================
+    btnAplicarFiltros.addEventListener("click", renderListaProdutos);
+    btnLimparFiltros.addEventListener("click", () => {
+      q_busca.value = "";
+      q_status.value = "all";
+      q_cat.value = "all";
+      q_cond.value = "all";
+      renderListaProdutos();
+    });
+
+    function donaNome(id){
+      const d = donas.find(x => x.id === id);
+      return d ? d.nome : "—";
+    }
+    function condNome(id){
+      const c = condominios.find(x => x.id === id);
+      return c ? c.nome : "—";
+    }
+
+    function renderListaProdutos(){
+      hideMsg(msgListaProdutos);
+
+      let list = [...produtos];
+
+      const busca = safeTrim(q_busca.value).toLowerCase();
+      const st = q_status.value;
+      const cat = q_cat.value;
+      const cond = q_cond.value;
+
+      if (st !== "all"){
+        const v = (st === "true");
+        list = list.filter(p => !!p.ativo === v);
+      }
+      if (cat !== "all"){
+        list = list.filter(p => (p.categoria || "") === cat);
+      }
+      if (cond !== "all"){
+        list = list.filter(p => (p.condominio_id || "") === cond);
+      }
+      if (busca){
+        list = list.filter(p =>
+          (p.nome || "").toLowerCase().includes(busca) ||
+          (p.descricao || "").toLowerCase().includes(busca) ||
+          (p.id || "").toLowerCase().includes(busca)
+        );
+      }
+
+      contagemProdutos.textContent = `${list.length} produto(s)`;
+
+      listaProdutos.innerHTML = "";
+      if (!list.length){
+        listaProdutos.innerHTML = `<div class="msg show warn">Nenhum produto encontrado com esses filtros.</div>`;
+        return;
+      }
+
+      list.forEach(p => {
+        const stClass = p.ativo ? "on" : "off";
+        const stText = p.ativo ? "Ativo" : "Inativo";
+
+        const el = document.createElement("div");
+        el.className = "item";
+
+        el.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(p.nome || "(sem nome)")}</div>
+            <div class="sub">
+              ${escapeHtml(p.categoria || "—")} • ${escapeHtml(donaNome(p.dona_id))} • ${escapeHtml(condNome(p.condominio_id))}
+            </div>
+            <div class="sub">${escapeHtml(p.id)} • ${toBRL(p.preco)}</div>
+            <div class="status ${stClass}">● ${stText}</div>
+          </div>
+          <div class="actions">
+            <button class="btn blue mini" type="button">Editar</button>
+            <button class="btn ${p.ativo ? "" : "green"} mini" type="button">${p.ativo ? "Desativar" : "Ativar"}</button>
+          </div>
+        `;
+
+        const [btnEdit, btnToggle] = el.querySelectorAll("button");
+        btnEdit.addEventListener("click", () => editProduto(p.id));
+        btnToggle.addEventListener("click", () => toggleAtivoProduto(p.id, !p.ativo));
+
+        listaProdutos.appendChild(el);
+      });
+    }
+
+    // =============================
+    //  INIT
+    // =============================
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    async function init(showToast){
+      // DUA: feedback simples
+      try{
+        fillCategorias();
+        resetProdutoForm();
+
+        await loadDonas();
+        await loadConds();
+        await loadProdutos();
+
+        // filtro condomínio preenchido após load
+        if (showToast){
+          showMsg(msgListaProdutos, "ok", "Dados recarregados com sucesso.");
+          setProdutoTab("list");
+        }
+      } catch(e){
+        console.error(e);
+        showMsg(msgListaProdutos, "err", "Erro ao carregar dados do Supabase. Verifique URL/Key e tente novamente.");
+        setProdutoTab("list");
+      }
+    }
+
+    // dispara inicialização
+    init(false);
+  </script>
 </body>
 </html>
