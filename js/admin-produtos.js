@@ -19,6 +19,10 @@ const btnLimparProduto = document.getElementById("btnLimparProduto");
 const modoTexto = document.getElementById("modoTexto");
 const produtoIdTexto = document.getElementById("produtoIdTexto");
 
+/ BOTÕES – FILTROS
+const btnAplicarFiltros = document.getElementById("btnAplicarFiltros");
+const btnLimparFiltros = document.getElementById("btnLimparFiltros");
+
 // LISTA / FILTROS
 const contagemProdutos = document.getElementById("contagemProdutos");
 const q_busca = document.getElementById("q_busca");
