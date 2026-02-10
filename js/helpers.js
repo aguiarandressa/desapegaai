@@ -1,10 +1,13 @@
-// =============================
-// HELPERS GERAIS (DUA)
-// =============================
+/* =========================
+   HELPERS / UTILITÁRIOS
+   ========================= */
 
+// -------------------------
+// Mensagens (DUA-friendly)
+// -------------------------
 function showMsg(el, type, text) {
   if (!el) return;
-  el.className = "msg show " + (type || "");
+  el.className = `msg show ${type || ""}`;
   el.textContent = text;
 }
 
@@ -14,16 +17,15 @@ function hideMsg(el) {
   el.textContent = "";
 }
 
-function onlyDigits(str) {
-  return (str || "").replace(/\D+/g, "");
+// -------------------------
+// Sanitização / Texto
+// -------------------------
+function safeTrim(value) {
+  return (value ?? "").toString().trim();
 }
 
-function safeTrim(str) {
-  return (str ?? "").toString().trim();
-}
-
-function uuid() {
-  return crypto.randomUUID();
+function onlyDigits(value) {
+  return (value ?? "").replace(/\D+/g, "");
 }
 
 function escapeHtml(str) {
@@ -36,6 +38,14 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+// -------------------------
+// Números / Moeda
+// -------------------------
+function normalizePrice(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : NaN;
+}
+
 function toBRL(value) {
   try {
     return Number(value).toLocaleString("pt-BR", {
@@ -45,4 +55,22 @@ function toBRL(value) {
   } catch {
     return "R$ 0,00";
   }
+}
+
+// -------------------------
+// IDs / Arquivos
+// -------------------------
+function uuid() {
+  return crypto.randomUUID();
+}
+
+function fileIsImage(file) {
+  return file && file.type && file.type.startsWith("image/");
+}
+
+// -------------------------
+// Supabase Storage
+// -------------------------
+function buildPublicImageUrl(path) {
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_PRODUTOS}/${encodeURIComponent(path)}`;
 }
