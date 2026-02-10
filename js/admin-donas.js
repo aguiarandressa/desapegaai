@@ -1,4 +1,4 @@
-const supabase = window.supabase;
+
 
 /* =========================
    ADMIN – DONAS (CRUD)
@@ -11,7 +11,7 @@ const d_nome = document.getElementById("d_nome");
 const d_whats = document.getElementById("d_whats");
 const btnAddDona = document.getElementById("btnAddDona");
 const listaDonas = document.getElementById("listaDonas");
-
+const supabase = window.supabase;
 // =========================
 // ESTADO
 // =========================
