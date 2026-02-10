@@ -1,126 +1,67 @@
+(() => {
+  const sb = window.sb;
 
+  /* ADMIN — DONAS (CRUD) */
 
-/* =========================
-   ADMIN – DONAS (CRUD)
-   ========================= */
-const supabase = window.supabase;
-// =========================
-// ELEMENTOS (DOM)
-// =========================
-const d_nome = document.getElementById("d_nome");
-const d_whats = document.getElementById("d_whats");
-const btnAddDona = document.getElementById("btnAddDona");
-const listaDonas = document.getElementById("listaDonas");
+  const d_nome = document.getElementById("d_nome");
+  const d_whats = document.getElementById("d_whats");
+  const btnAddDona = document.getElementById("btnAddDona");
+  const listaDonas = document.getElementById("listaDonas");
+  const msgDona = document.getElementById("msgDona");
 
-// =========================
-// ESTADO
-// =========================
-let donas = [];
+  let donas = [];
 
-// =========================
-// EVENTOS
-// =========================
-if (btnAddDona) {
-  btnAddDona.addEventListener("click", addDona);
-}
+  async function loadDonas() {
+    const { data, error } = await sb
+      .from("donas")
+      .select("*")
+      .order("nome", { ascending: true });
 
-// =========================
-// FUNÇÕES
-// =========================
-async function loadDonas() {
-  const { data, error } = await supabase
-    .from("donas")
-    .select("*")
-    .order("nome", { ascending: true });
+    if (error) {
+      showMsg(msgDona, "err", "Erro ao carregar donas.");
+      console.error(error);
+      return;
+    }
 
-  if (error) {
-    showMsg(msgDona, "err", "Erro ao carregar donas.");
-    console.error(error);
-    return;
+    donas = data || [];
+    renderDonas();
+    fillDonasSelect();
   }
 
-  donas = data || [];
-  renderDonas();
-  fillDonasSelect();
-}
+  // expõe pro init.js conseguir chamar
+  window.Admin = window.Admin || {};
+  window.Admin.loadDonas = loadDonas;
+  window.Admin.getDonas = () => donas;
 
-async function addDona() {
-  hideMsg(msgDona);
+  if (btnAddDona) btnAddDona.addEventListener("click", addDona);
 
-  const nome = safeTrim(d_nome.value);
-  const whats = onlyDigits(d_whats.value);
+  async function addDona() {
+    hideMsg(msgDona);
 
-  if (!nome) {
-    return showMsg(msgDona, "err", "Informe o nome da dona.");
+    const nome = safeTrim(d_nome.value);
+    const whats = onlyDigits(d_whats.value);
+
+    if (!nome) return showMsg(msgDona, "err", "Informe o nome da dona.");
+    if (!whats || whats.length < 12) {
+      return showMsg(msgDona, "err", "Informe um WhatsApp válido (55 + DDD + número).");
+    }
+
+    const jaExiste = donas.some((d) => onlyDigits(d.whatsapp) === whats);
+    if (jaExiste) return showMsg(msgDona, "warn", "Já existe uma dona com esse WhatsApp.");
+
+    const payload = { id: crypto.randomUUID(), nome, whatsapp: whats };
+    const { error } = await sb.from("donas").insert([payload]);
+
+    if (error) {
+      console.error(error);
+      return showMsg(msgDona, "err", "Erro ao salvar dona.");
+    }
+
+    d_nome.value = "";
+    d_whats.value = "";
+    showMsg(msgDona, "ok", "Dona cadastrada!");
+    await loadDonas();
   }
-
-  if (!whats || whats.length < 12) {
-    return showMsg(
-      msgDona,
-      "err",
-      "Informe um WhatsApp válido (55 + DDD + número)."
-    );
-  }
-
-  const jaExiste = donas.some(
-    (d) => onlyDigits(d.whatsapp) === whats
-  );
-
-  if (jaExiste) {
-    return showMsg(
-      msgDona,
-      "warn",
-      "Já existe uma dona cadastrada com esse WhatsApp."
-    );
-  }
-
-  const payload = {
-    id: crypto.randomUUID(),
-    nome,
-    whatsapp: whats,
-  };
-
-  const { error } = await supabase.from("donas").insert([payload]);
-
-  if (error) {
-    console.error(error);
-    return showMsg(
-      msgDona,
-      "err",
-      "Erro ao salvar dona. Tente novamente."
-    );
-  }
-
-  d_nome.value = "";
-  d_whats.value = "";
-
-  showMsg(msgDona, "ok", "Dona cadastrada com sucesso!");
-  await loadDonas();
-}
-
-async function delDona(id) {
-  const ok = confirm(
-    "Excluir esta dona? Produtos vinculados podem impedir a exclusão."
-  );
-  if (!ok) return;
-
-  const { error } = await supabase
-    .from("donas")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error(error);
-    return showMsg(
-      msgDona,
-      "err",
-      "Não foi possível excluir. Pode haver produtos vinculados."
-    );
-  }
-
-  showMsg(msgDona, "ok", "Dona excluída.");
-  await loadDonas();
-}
 
 // =========================
 // RENDER
