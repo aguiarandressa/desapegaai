@@ -37,7 +37,7 @@ h1 {
   display:flex;
   justify-content:center;
   gap:10px;
-  margin:20px 0 30px;
+  margin-bottom:24px;
   flex-wrap:wrap;
 }
 
@@ -156,47 +156,16 @@ h1 {
   cursor:pointer;
 }
 
-/* ===== AJUSTES MOBILE ===== */
-@media (max-width: 768px) {
-
-  .container {
-    padding:16px;
-  }
-
-  h1 {
-    font-size:24px;
-    margin-bottom:16px;
-  }
-
-  .grid {
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  .product-image img {
-    height:180px;
-  }
-
-  .add-btn {
-    font-size:15px;
-    padding:12px;
-    border-radius:12px;
-  }
-
+/* MOBILE */
+@media (max-width:768px){
+  .grid { grid-template-columns:1fr; }
   .cart {
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
+    bottom:0; left:0; right:0;
     width:100%;
     border-radius:16px 16px 0 0;
-    padding:14px 16px;
     box-shadow:0 -10px 30px rgba(0,0,0,.2);
   }
-
-  body {
-    padding-bottom:140px;
-  }
+  body { padding-bottom:140px; }
 }
 </style>
 </head>
@@ -206,62 +175,9 @@ h1 {
 <div class="container">
   <h1>DesapegaAi</h1>
 
-  <!-- FILTROS -->
-  <div class="filters">
-    <button class="filter-btn active" onclick="filterProducts('all', this)">Todos</button>
-    <button class="filter-btn" onclick="filterProducts('calcados', this)">Calçados</button>
-    <button class="filter-btn" onclick="filterProducts('infantil', this)">Infantil</button>
-    <button class="filter-btn" onclick="filterProducts('roupas', this)">Roupas</button>
-  </div>
+  <div class="filters" id="filters"></div>
 
-  <!-- PRODUTOS -->
-  <div class="grid">
-
-    <!-- PRODUTO 1 -->
-    <div class="product-card calcados infantil">
-      <div class="product-image">
-        <img src="chinelo-infantil-22.png" alt="Chinelo Infantil tamanho 22">
-      </div>
-      <div class="product-content">
-        <span class="badge">Calçados • Infantil</span>
-        <div class="product-title">Chinelo Infantil</div>
-        <div class="product-price">R$ 5,00</div>
-        <div class="product-id">CAL001 • Tam 22</div>
-        <button class="add-btn"
-          onclick="addToCart('Chinelo Infantil','CAL001',5)">
-          Adicionar ao carrinho
-        </button>
-      </div>
-    </div>
-
-    <!-- SIMULADOS -->
-    <div class="product-card roupas">
-      <div class="product-content">
-        <span class="badge">Roupas</span>
-        <div class="product-title">Camiseta Infantil</div>
-        <div class="product-price">R$ 15,00</div>
-        <div class="product-id">R001</div>
-        <button class="add-btn"
-          onclick="addToCart('Camiseta Infantil','R001',15)">
-          Adicionar ao carrinho
-        </button>
-      </div>
-    </div>
-
-    <div class="product-card roupas">
-      <div class="product-content">
-        <span class="badge">Roupas</span>
-        <div class="product-title">Casaco Feminino</div>
-        <div class="product-price">R$ 60,00</div>
-        <div class="product-id">R002</div>
-        <button class="add-btn"
-          onclick="addToCart('Casaco Feminino','R002',60)">
-          Adicionar ao carrinho
-        </button>
-      </div>
-    </div>
-
-  </div>
+  <div class="grid" id="productGrid"></div>
 </div>
 
 <!-- CARRINHO -->
@@ -269,72 +185,121 @@ h1 {
   <h3>🛒 Carrinho</h3>
   <div class="cart-items" id="cartItems">Vazio</div>
   <div class="cart-total" id="cartTotal">Total: R$ 0,00</div>
-  <button class="cart-btn" onclick="sendWhatsApp()">
-    Finalizar no WhatsApp
-  </button>
+  <button class="cart-btn" onclick="finalizar()">Finalizar no WhatsApp</button>
 </div>
 
 <script>
+/* ===== DADOS ===== */
+const produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+const donas = JSON.parse(localStorage.getItem('donas')) || [];
+
 let cart = [];
 
-function addToCart(name,id,price) {
-  cart.push({name,id,price});
+/* MAP DONAS */
+const mapDonas = {};
+donas.forEach(d => mapDonas[d.id] = d);
+
+/* ===== FILTROS ===== */
+function renderFilters() {
+  const cats = [...new Set(produtos.map(p => p.categoria))];
+  filters.innerHTML = `
+    <button class="filter-btn active" onclick="filtrar('all',this)">Todos</button>
+    ${cats.map(c => `<button class="filter-btn" onclick="filtrar('${c}',this)">${c}</button>`).join('')}
+  `;
+}
+
+/* ===== PRODUTOS ===== */
+function renderProdutos(list) {
+  productGrid.innerHTML = list.map(p => `
+    <div class="product-card ${p.categoria}">
+      <div class="product-image">
+        <img src="uploads/${p.imagem}">
+      </div>
+      <div class="product-content">
+        <span class="badge">${p.categoria}</span>
+        <div class="product-title">${p.nome}</div>
+        <div class="product-price">R$ ${p.preco},00</div>
+        <div class="product-id">${p.id} • Dona ${p.dona}</div>
+        <button class="add-btn" onclick="addCart('${p.id}')">Adicionar ao carrinho</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ===== CARRINHO ===== */
+function addCart(id) {
+  if (cart.find(i => i.id === id)) {
+    alert('Produto já no carrinho');
+    return;
+  }
+  const p = produtos.find(x => x.id === id);
+  cart.push(p);
+  renderCart();
+}
+
+function removeCart(id) {
+  cart = cart.filter(i => i.id !== id);
   renderCart();
 }
 
 function renderCart() {
-  const list = document.getElementById('cartItems');
-  const totalEl = document.getElementById('cartTotal');
-
-  if(cart.length === 0) {
-    list.innerHTML = 'Vazio';
-    totalEl.innerHTML = 'Total: R$ 0,00';
+  if (cart.length === 0) {
+    cartItems.innerHTML = 'Vazio';
+    cartTotal.innerHTML = 'Total: R$ 0,00';
     return;
   }
 
   let total = 0;
-  list.innerHTML = cart.map(p => {
-    total += p.price;
-    return `• ${p.name} (${p.id}) - R$ ${p.price},00`;
-  }).join('<br>');
+  cartItems.innerHTML = cart.map(p => {
+    total += p.preco;
+    return `
+      <div style="margin-bottom:6px">
+        ${p.nome} (${p.id})<br>
+        <strong>R$ ${p.preco},00</strong>
+        <button onclick="removeCart('${p.id}')">❌</button>
+      </div>
+    `;
+  }).join('');
 
-  totalEl.innerHTML = `Total: R$ ${total},00`;
+  cartTotal.innerHTML = `Total: R$ ${total},00`;
 }
 
-function sendWhatsApp() {
-  if(cart.length === 0) {
-    alert('Carrinho vazio');
-    return;
-  }
+/* ===== FINALIZAR (POR DONA) ===== */
+function finalizar() {
+  if (cart.length === 0) return;
 
-  let msg = 'Olá! Tenho interesse nos seguintes produtos:%0A%0A';
-  let total = 0;
-
+  const grupos = {};
   cart.forEach(p => {
-    msg += `• ${p.name} (${p.id}) - R$ ${p.price},00%0A`;
-    total += p.price;
+    if (!grupos[p.dona]) grupos[p.dona] = [];
+    grupos[p.dona].push(p);
   });
 
-  msg += `%0A*Total: R$ ${total},00*`;
+  Object.keys(grupos).forEach(id => {
+    const dona = mapDonas[id];
+    let msg = `Olá ${dona.nome}! Tenho interesse nos seguintes produtos:%0A%0A`;
+    let total = 0;
 
-  window.open(
-    'https://wa.me/5551982003423?text=' + msg,
-    '_blank'
-  );
+    grupos[id].forEach(p => {
+      msg += `• ${p.nome} (${p.id}) - R$ ${p.preco},00%0A`;
+      total += p.preco;
+    });
+
+    msg += `%0A*Total: R$ ${total},00*`;
+
+    window.open(`https://wa.me/${dona.whatsapp}?text=${msg}`, '_blank');
+  });
 }
 
-function filterProducts(category, btn) {
+/* ===== FILTRAR ===== */
+function filtrar(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-
-  document.querySelectorAll('.product-card').forEach(card => {
-    if(category === 'all' || card.classList.contains(category)) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
-  });
+  renderProdutos(cat === 'all' ? produtos : produtos.filter(p => p.categoria === cat));
 }
+
+/* INIT */
+renderFilters();
+renderProdutos(produtos);
 </script>
 
 </body>
