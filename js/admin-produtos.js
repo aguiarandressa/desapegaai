@@ -63,20 +63,33 @@ function fillCategorias() {
 // =============================
 // PREVIEW DE IMAGEM
 // =============================
-p_imagem.addEventListener("change", () => {
-  const file = p_imagem.files?.[0];
-  if (!file) return resetPreview();
+const p_imagem = document.getElementById("p_imagem");
 
-  if (!file.type.startsWith("image/")) {
-    showMsg(msgProduto, "err", "Selecione uma imagem válida.");
-    resetPreview();
-    return;
-  }
+if (p_imagem) {
+  p_imagem.addEventListener("change", () => {
+    const file = p_imagem.files?.[0];
+    if (!file) return;
 
-  p_preview.src = URL.createObjectURL(file);
-  p_preview.style.display = "block";
-  p_preview_text.textContent = `Imagem selecionada: ${file.name}`;
-});
+    if (!file.type.startsWith("image/")) {
+      showMsg(msgProduto, "err", "Selecione um arquivo de imagem válido.");
+      p_imagem.value = "";
+      return;
+    }
+
+    const preview = document.getElementById("p_preview");
+    const previewText = document.getElementById("p_preview_text");
+
+    if (preview) {
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    }
+
+    if (previewText) {
+      previewText.textContent = `Arquivo selecionado: ${file.name}`;
+    }
+  });
+}
+
 
 function resetPreview() {
   p_preview.src = "";
