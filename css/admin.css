@@ -1,0 +1,305 @@
+/* ===============================
+   Admin — DesapegaAi
+   Estilos base (MVP)
+   DUA: legibilidade, contraste, previsibilidade
+================================ */
+
+:root{
+  --bg:#f3f5f7;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --green:#16a34a;
+  --red:#dc2626;
+  --blue:#2563eb;
+  --amber:#f59e0b;
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body{
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===============================
+   Layout
+================================ */
+
+.container{
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-bottom: 16px;
+}
+
+h1{
+  margin:0;
+  font-size: 24px;
+  letter-spacing: -0.3px;
+}
+
+.subtitle{
+  margin:6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+  align-items:start;
+}
+
+/* ===============================
+   Cards
+================================ */
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+.card h2{
+  margin: 0 0 10px;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+}
+
+.hint{
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+  line-height: 1.35;
+}
+
+/* ===============================
+   Botões
+================================ */
+
+.btn{
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor:pointer;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.btn.primary{
+  background: var(--text);
+  color:#fff;
+  border-color: var(--text);
+}
+
+.btn.green{
+  background: var(--green);
+  color:#fff;
+  border-color: var(--green);
+}
+
+.btn.red{
+  background: var(--red);
+  color:#fff;
+  border-color: var(--red);
+}
+
+.btn.blue{
+  background: var(--blue);
+  color:#fff;
+  border-color: var(--blue);
+}
+
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.mini{
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+/* ===============================
+   Formulários
+================================ */
+
+label{
+  display:block;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 6px 0;
+}
+
+input, select, textarea{
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+textarea{
+  min-height: 92px;
+  resize: vertical;
+}
+
+.row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ===============================
+   Tabs
+================================ */
+
+.tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom: 10px;
+}
+
+.tab{
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.tab.active{
+  background: var(--text);
+  border-color: var(--text);
+  color:#fff;
+}
+
+/* ===============================
+   Mensagens (DUA)
+================================ */
+
+.msg{
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background:#fff;
+  font-size: 13px;
+  margin-top: 10px;
+  display:none;
+}
+
+.msg.show{ display:block; }
+
+.msg.ok{
+  border-color: rgba(22,163,74,.35);
+  background: rgba(22,163,74,.08);
+}
+
+.msg.err{
+  border-color: rgba(220,38,38,.35);
+  background: rgba(220,38,38,.08);
+}
+
+.msg.warn{
+  border-color: rgba(245,158,11,.35);
+  background: rgba(245,158,11,.10);
+}
+
+/* ===============================
+   Listas
+================================ */
+
+.list{
+  margin-top: 10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.item{
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  background:#fff;
+}
+
+.item .meta{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.item .title{
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.item .sub{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===============================
+   Status
+================================ */
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size: 12px;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+}
+
+.status.on{
+  color: var(--green);
+  background: rgba(22,163,74,.08);
+}
+
+.status.off{
+  color: var(--muted);
+  background: rgba(107,114,128,.10);
+}
+
+/* ===============================
+   Mobile
+================================ */
+
+@media (max-width: 900px){
+  .grid{
+    grid-template-columns: 1fr;
+  }
+}
