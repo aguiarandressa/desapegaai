@@ -19,6 +19,15 @@ const produtoListWrap = document.getElementById("produtoListWrap");
 const msgProduto = document.getElementById("msgProduto");
 
 // =========================
+// MENSAGENS (GLOBAIS DO ADMIN)
+// =========================
+const msgDona = document.getElementById("msgDona");
+const msgCond = document.getElementById("msgCond");
+const msgProduto = document.getElementById("msgProduto");
+const msgListaProdutos = document.getElementById("msgListaProdutos");
+
+
+// =========================
 // TABS – BASE (DONAS / CONDOMÍNIOS)
 // =========================
 const tabDonas = document.getElementById("tabDonas");
