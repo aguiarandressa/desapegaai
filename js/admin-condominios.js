@@ -6,9 +6,7 @@
 const c_nome = document.getElementById("c_nome");
 const btnAddCond = document.getElementById("btnAddCond");
 const listaConds = document.getElementById("listaConds");
-//const msgCond = document.getElementById("msgCond");
 
-// ESTADO
 let condominios = [];
 
 // EVENTO
