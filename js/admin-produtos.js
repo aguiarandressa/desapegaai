@@ -28,8 +28,7 @@ const q_busca = document.getElementById("q_busca");
 const q_status = document.getElementById("q_status");
 const q_cat = document.getElementById("q_cat");
 const q_cond = document.getElementById("q_cond");
-const btnAplicarFiltros = document.getElementById("btnAplicarFiltros");
-const btnLimparFiltros = document.getElementById("btnLimparFiltros");
+
 
 // ESTADO
 let produtos = [];
