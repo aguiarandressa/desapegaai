@@ -117,8 +117,13 @@ async function loadProdutos() {
 // =============================
 // SALVAR PRODUTO
 // =============================
-btnSalvarProduto.addEventListener("click", saveProduto);
-btnLimparProduto.addEventListener("click", resetProdutoForm);
+if (btnSalvarProduto) {
+  btnSalvarProduto.addEventListener("click", saveProduto);
+}
+
+if (btnLimparProduto) {
+  btnLimparProduto.addEventListener("click", resetProdutoForm);
+}
 
 async function saveProduto() {
   hideMsg(msgProduto);
