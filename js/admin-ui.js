@@ -26,7 +26,7 @@ const tabDonas = document.getElementById("tabDonas");
 const tabConds = document.getElementById("tabConds");
 const donasWrap = document.getElementById("donasWrap");
 const condsWrap = document.getElementById("condsWrap");
-const msgDona = document.getElementById("msgDona");
+//const msgDona = document.getElementById("msgDona");
 const msgCond = document.getElementById("msgCond");
 
 // =========================
