@@ -20,7 +20,7 @@ const msgListaProdutos = document.getElementById("msgListaProdutos");
 const msgProduto = document.getElementById("msgProduto");
 
 // =========================
-// TABS – BASE (DONAS / CONDS)
+// TABS – BASE (DONAS / CONDOMÍNIOS)
 // =========================
 const tabDonas = document.getElementById("tabDonas");
 const tabConds = document.getElementById("tabConds");
@@ -33,6 +33,8 @@ const msgCond = document.getElementById("msgCond");
 // FUNÇÕES – PRODUTOS (UI)
 // =========================
 function setProdutoTab(tab) {
+  if (!tabProdutoForm || !tabProdutoList || !produtoFormWrap || !produtoListWrap) return;
+
   const isForm = tab === "form";
 
   tabProdutoForm.classList.toggle("active", isForm);
@@ -41,14 +43,47 @@ function setProdutoTab(tab) {
   produtoFormWrap.style.display = isForm ? "block" : "none";
   produtoListWrap.style.display = isForm ? "none" : "block";
 
-  hideMsg(msgProduto);
-  hideMsg(msgListaProdutos);
+  if (typeof hideMsg === "function") {
+    hideMsg(msgProduto);
+    hideMsg(msgListaProdutos);
+  }
 }
 
 // =========================
 // FUNÇÕES – BASE (UI)
 // =========================
 function setBaseTab(tab) {
+  if (!tabDonas || !tabConds || !donasWrap || !condsWrap) return;
+
   const isDonas = tab === "donas";
 
-  tab
+  tabDonas.classList.toggle("active", isDonas);
+  tabConds.classList.toggle("active", !isDonas);
+
+  donasWrap.style.display = isDonas ? "block" : "none";
+  condsWrap.style.display = isDonas ? "none" : "block";
+
+  if (typeof hideMsg === "function") {
+    hideMsg(msgDona);
+    hideMsg(msgCond);
+  }
+}
+
+// =========================
+// EVENTOS – TABS
+// =========================
+if (tabProdutoForm) {
+  tabProdutoForm.addEventListener("click", () => setProdutoTab("form"));
+}
+
+if (tabProdutoList) {
+  tabProdutoList.addEventListener("click", () => setProdutoTab("list"));
+}
+
+if (tabDonas) {
+  tabDonas.addEventListener("click", () => setBaseTab("donas"));
+}
+
+if (tabConds) {
+  tabConds.addEventListener("click", () => setBaseTab("conds"));
+}
