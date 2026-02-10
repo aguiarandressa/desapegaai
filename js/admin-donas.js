@@ -1,3 +1,5 @@
+const supabase = window.supabase;
+
 /* =========================
    ADMIN – DONAS (CRUD)
    ========================= */
