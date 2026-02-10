@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>DesapegaAi • Painel Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background:#f5f5f5;
+  margin:0;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:24px;
+}
+
+h1 {
+  margin-bottom:20px;
+}
+
+.card {
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+label {
+  display:block;
+  margin-top:12px;
+  font-weight:bold;
+}
+
+input, select {
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+}
+
+button {
+  margin-top:16px;
+  padding:12px;
+  background:#16a34a;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+pre {
+  background:#111827;
+  color:#fff;
+  padding:16px;
+  overflow:auto;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>🛠️ Painel Admin • DesapegaAi</h1>
+
+  <!-- DONAS -->
+  <div class="card">
+    <h2>Cadastrar Dona</h2>
+
+    <label>ID</label>
+    <input id="donaId">
+
+    <label>Nome</label>
+    <input id="donaNome">
+
+    <label>WhatsApp</label>
+    <input id="donaWhats">
+
+    <button onclick="addDona()">Salvar Dona</button>
+  </div>
+
+  <!-- PRODUTO -->
+  <div class="card">
+    <h2>Cadastrar Produto</h2>
+
+    <label>ID</label>
+    <input id="prodId">
+
+    <label>Nome</label>
+    <input id="prodNome">
+
+    <label>Categoria</label>
+    <input id="prodCat">
+
+    <label>Subcategoria</label>
+    <input id="prodSub">
+
+    <label>Preço</label>
+    <input id="prodPreco" type="number">
+
+    <label>Dona (ID)</label>
+    <input id="prodDona">
+
+    <label>Imagem (nome do arquivo)</label>
+    <input id="prodImg">
+
+    <button onclick="addProduto()">Salvar Produto</button>
+  </div>
+
+  <!-- SAÍDA JSON -->
+  <div class="card">
+    <h2>📄 JSON Gerado</h2>
+    <pre id="output">{}</pre>
+  </div>
+</div>
+
+<script>
+let donas = [];
+let produtos = [];
+
+function addDona() {
+  donas.push({
+    id: donaId.value,
+    nome: donaNome.value,
+    whatsapp: donaWhats.value
+  });
+  render();
+}
+
+function addProduto() {
+  produtos.push({
+    id: prodId.value,
+    nome: prodNome.value,
+    categoria: prodCat.value,
+    subcategoria: prodSub.value,
+    preco: Number(prodPreco.value),
+    donaId: prodDona.value,
+    imagens: [prodImg.value],
+    ativo: true
+  });
+  render();
+}
+
+function render() {
+  document.getElementById('output').textContent = JSON.stringify({
+    donas,
+    produtos
+  }, null, 2);
+}
+</script>
+</body>
+</html>
