@@ -16,13 +16,10 @@ const p_preview_text = document.getElementById("p_preview_text");
 
 const btnSalvarProduto = document.getElementById("btnSalvarProduto");
 const btnLimparProduto = document.getElementById("btnLimparProduto");
-//const msgProduto = document.getElementById("msgProduto");
-
 const modoTexto = document.getElementById("modoTexto");
 const produtoIdTexto = document.getElementById("produtoIdTexto");
 
 // LISTA / FILTROS
-const listaProdutos = document.getElementById("listaProdutos");
 const contagemProdutos = document.getElementById("contagemProdutos");
 const q_busca = document.getElementById("q_busca");
 const q_status = document.getElementById("q_status");
