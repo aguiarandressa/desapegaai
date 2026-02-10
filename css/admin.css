@@ -1,305 +1,277 @@
-/* ===============================
-   Admin — DesapegaAi
-   Estilos base (MVP)
-   DUA: legibilidade, contraste, previsibilidade
-================================ */
-
-:root{
-  --bg:#f3f5f7;
-  --card:#ffffff;
-  --text:#111827;
-  --muted:#6b7280;
-  --border:#e5e7eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --blue:#2563eb;
-  --amber:#f59e0b;
-  --shadow: 0 10px 30px rgba(0,0,0,.08);
-  --radius: 16px;
+/* =========================
+   VARIÁVEIS
+========================= */
+:root {
+  --bg: #f3f4f6;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #111827;
+  --green: #16a34a;
+  --red: #dc2626;
+  --blue: #2563eb;
+  --radius: 14px;
 }
 
+/* =========================
+   BASE
+========================= */
 * {
   box-sizing: border-box;
 }
 
-body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
 
-/* ===============================
-   Layout
-================================ */
-
-.container{
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 20px;
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px;
 }
 
-header{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  justify-content:space-between;
-  flex-wrap:wrap;
+/* =========================
+   HEADER
+========================= */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-actions button {
+  margin-left: 8px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   TABS
+========================= */
+.tabs {
+  display: flex;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
-h1{
-  margin:0;
-  font-size: 24px;
-  letter-spacing: -0.3px;
-}
-
-.subtitle{
-  margin:6px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.35;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 16px;
-  align-items:start;
-}
-
-/* ===============================
-   Cards
-================================ */
-
-.card{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 14px;
-}
-
-.card h2{
-  margin: 0 0 10px;
-  font-size: 16px;
-  letter-spacing: -0.2px;
-}
-
-.hint{
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 12px;
-  line-height: 1.35;
-}
-
-/* ===============================
-   Botões
-================================ */
-
-.btn{
+.tabs button {
+  padding: 8px 14px;
+  border-radius: 999px;
   border: 1px solid var(--border);
   background: #fff;
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor:pointer;
-  font-weight: 700;
+  cursor: pointer;
   font-size: 14px;
 }
 
-.btn.primary{
-  background: var(--text);
-  color:#fff;
-  border-color: var(--text);
+.tabs button.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
 }
 
-.btn.green{
-  background: var(--green);
-  color:#fff;
-  border-color: var(--green);
-}
-
-.btn.red{
-  background: var(--red);
-  color:#fff;
-  border-color: var(--red);
-}
-
-.btn.blue{
-  background: var(--blue);
-  color:#fff;
-  border-color: var(--blue);
-}
-
-.btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.mini{
-  padding: 8px 10px;
-  font-size: 13px;
-  font-weight: 900;
-}
-
-/* ===============================
-   Formulários
-================================ */
-
-label{
-  display:block;
-  font-size: 13px;
-  color: var(--muted);
-  margin: 6px 0;
-}
-
-input, select, textarea{
+/* =========================
+   FORMULÁRIOS
+========================= */
+input,
+textarea,
+select {
   width: 100%;
   padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  margin-bottom: 10px;
   font-size: 14px;
-  outline: none;
-  background: #fff;
 }
 
-textarea{
-  min-height: 92px;
+textarea {
   resize: vertical;
 }
 
-.row{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
-/* ===============================
-   Tabs
-================================ */
-
-.tabs{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom: 10px;
-}
-
-.tab{
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background:#fff;
-  cursor:pointer;
-  font-weight: 800;
-  font-size: 13px;
-}
-
-.tab.active{
-  background: var(--text);
-  border-color: var(--text);
-  color:#fff;
-}
-
-/* ===============================
-   Mensagens (DUA)
-================================ */
-
-.msg{
-  border-radius: 14px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  background:#fff;
-  font-size: 13px;
-  margin-top: 10px;
-  display:none;
-}
-
-.msg.show{ display:block; }
-
-.msg.ok{
-  border-color: rgba(22,163,74,.35);
-  background: rgba(22,163,74,.08);
-}
-
-.msg.err{
-  border-color: rgba(220,38,38,.35);
-  background: rgba(220,38,38,.08);
-}
-
-.msg.warn{
-  border-color: rgba(245,158,11,.35);
-  background: rgba(245,158,11,.10);
-}
-
-/* ===============================
-   Listas
-================================ */
-
-.list{
-  margin-top: 10px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.item{
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  background:#fff;
-}
-
-.item .meta{
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-}
-
-.item .title{
-  font-weight: 900;
+/* =========================
+   BOTÕES
+========================= */
+button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: var(--primary);
+  color: #fff;
   font-size: 14px;
 }
 
-.item .sub{
-  font-size: 12px;
+button:hover {
+  opacity: 0.9;
+}
+
+button.red {
+  background: var(--red);
+}
+
+button.blue {
+  background: var(--blue);
+}
+
+button.green {
+  background: var(--green);
+}
+
+button.mini {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* =========================
+   MENSAGENS
+========================= */
+.msg {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.msg.show {
+  display: block;
+}
+
+.msg.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.msg.err {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.msg.warn {
+  background: #fef9c3;
+  color: #92400e;
+}
+
+/* =========================
+   LISTAS (PRODUTOS / DONAS)
+========================= */
+#listaProdutos,
+#listaDonas,
+#listaConds {
+  margin-top: 16px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.item .meta .title {
+  font-weight: 600;
+}
+
+.item .meta .sub {
+  font-size: 13px;
   color: var(--muted);
 }
 
-/* ===============================
-   Status
-================================ */
+.item .actions button {
+  margin-left: 6px;
+}
 
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  font-size: 12px;
-  font-weight: 900;
-  border-radius: 999px;
-  padding: 5px 8px;
+/* =========================
+   STATUS
+========================= */
+.status {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.status.on {
+  color: var(--green);
+}
+
+.status.off {
+  color: var(--red);
+}
+
+/* =========================
+   FILTROS
+========================= */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* =========================
+   IMAGEM PREVIEW
+========================= */
+#p_preview {
+  margin-top: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
 }
 
-.status.on{
-  color: var(--green);
-  background: rgba(22,163,74,.08);
-}
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 
-.status.off{
-  color: var(--muted);
-  background: rgba(107,114,128,.10);
-}
+  .tabs {
+    flex-wrap: wrap;
+  }
 
-/* ===============================
-   Mobile
-================================ */
+  button {
+    width: 100%;
+  }
 
-@media (max-width: 900px){
-  .grid{
-    grid-template-columns: 1fr;
+  .item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .item .actions {
+    width: 100%;
+    display: flex;
+    gap: 6px;
   }
 }
