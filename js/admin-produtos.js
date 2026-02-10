@@ -16,7 +16,7 @@ const p_preview_text = document.getElementById("p_preview_text");
 
 const btnSalvarProduto = document.getElementById("btnSalvarProduto");
 const btnLimparProduto = document.getElementById("btnLimparProduto");
-const msgProduto = document.getElementById("msgProduto");
+//const msgProduto = document.getElementById("msgProduto");
 
 const modoTexto = document.getElementById("modoTexto");
 const produtoIdTexto = document.getElementById("produtoIdTexto");
