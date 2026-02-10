@@ -1,25 +1,27 @@
 /* =========================
-   CONFIGURAÇÕES GLOBAIS
+   CONFIGURAÇÕES GLOBAIS (ADMIN)
    ========================= */
 
-// ⚠️ NUNCA redeclarar isso em outro arquivo
-const SUPABASE_URL = "https://ssspgiiftrhvdjidndzi.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_igD1PWk91A-ySowhPqJdA_484zncZX";
+(function () {
+  // ---- Config (coloque tudo em window para ficar acessível e evitar redeclaração acidental)
+  window.SUPABASE_URL = "https://ssspgiiftrhvdjidndzi.supabase.co";
+  window.SUPABASE_ANON_KEY = "sb_publishable_igD1PWk91A-ySowhPqJdA_484zncZX";
+  window.BUCKET_PRODUTOS = "produtos";
 
-// Bucket público onde ficam as imagens
-const BUCKET_PRODUTOS = "produtos";
+  // ---- Garantir que o CDN do Supabase foi carregado
+  if (!window.supabaseJs || typeof window.supabaseJs.createClient !== "function") {
+    console.error("Supabase JS não carregou. Verifique o <script src> do CDN no admin.html");
+    return;
+  }
 
-// =========================
-// Cliente Supabase (singleton)
-// =========================
+  // ---- Singleton do client
+  if (!window.supabase) {
+    window.supabase = window.supabaseJs.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY
+    );
+  }
 
-// Evita erro: "Identifier 'supabase' has already been declared"
-if (!window.supabase) {
-  window.supabase = supabaseJs.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
-}
-
-// A partir daqui, TODOS os arquivos usam:
-// 👉 window.supabase
+  // Atalho opcional (pra ficar curto nos outros arquivos)
+  window.sb = window.supabase;
+})();
