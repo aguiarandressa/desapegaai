@@ -3,6 +3,15 @@
    (somente interface)
    ========================= */
 
+// MENSAGENS (GLOBAIS DO ADMIN)
+// =========================
+const msgDona = document.getElementById("msgDona");
+const msgCond = document.getElementById("msgCond");
+const msgProduto = document.getElementById("msgProduto");
+const msgListaProdutos = document.getElementById("msgListaProdutos");
+
+
+
 // =========================
 // ELEMENTOS – TOPO
 // =========================
