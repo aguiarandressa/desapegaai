@@ -29,8 +29,6 @@ const produtoListWrap = document.getElementById("produtoListWrap");
 
 
 
-
-
 // =========================
 // TABS – BASE (DONAS / CONDOMÍNIOS)
 // =========================
@@ -38,7 +36,7 @@ const tabDonas = document.getElementById("tabDonas");
 const tabConds = document.getElementById("tabConds");
 const donasWrap = document.getElementById("donasWrap");
 const condsWrap = document.getElementById("condsWrap");
-const msgCond = document.getElementById("msgCond");
+//const msgCond = document.getElementById("msgCond");
 
 // =========================
 // FUNÇÕES – PRODUTOS (UI)
@@ -70,7 +68,6 @@ function setBaseTab(tab) {
 
   tabDonas.classList.toggle("active", isDonas);
   tabConds.classList.toggle("active", !isDonas);
-
   donasWrap.style.display = isDonas ? "block" : "none";
   condsWrap.style.display = isDonas ? "none" : "block";
 
