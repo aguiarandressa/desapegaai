@@ -553,12 +553,14 @@
     // =============================
     //  CONFIG SUPABASE
     // =============================
-    const SUPABASE_URL = "SUA_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "SUA_SUPABASE_ANON_KEY";
-    const BUCKET = "produtos"; // bucket_id confirmado nas policies
+    const SUPABASE_URL = "https://ssspgiiftrhvdjidndzi.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_igD1PWk91A-ySowhPqJdA_484zncZX";
+  const BUCKET = "produtos";
 
-    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+  const supabase = supabaseJs.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
     // =============================
     //  CATEGORIAS PADRÃO (evita retrabalho)
     // =============================
