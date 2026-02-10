@@ -63,7 +63,6 @@ function fillCategorias() {
 // =============================
 // PREVIEW DE IMAGEM
 // =============================
-const p_imagem = document.getElementById("p_imagem");
 
 if (p_imagem) {
   p_imagem.addEventListener("change", () => {
